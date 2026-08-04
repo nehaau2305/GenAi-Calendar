@@ -44,7 +44,6 @@ class SuggestionResponse(BaseModel):
     suggested_start_time: Optional[datetime] = None
     suggested_end_time: Optional[datetime] = None
     location: Optional[str] = None
-    status: str
 
     class Config: 
         from_attributes = True

@@ -35,7 +35,6 @@ class Suggestion(Base):
     suggested_start_time = Column(DateTime, nullable=True)
     suggested_end_time = Column(DateTime, nullable=True)
     location = Column(String, nullable=True)
-    status = Column(String, nullable=False, default="pending")
 
 #AI generated reminder
 class SmartReminder(Base):

@@ -26,8 +26,7 @@ def suggest_events(note_id: int, db: Session = Depends(get_db)):
             description=item.get("description"),
             suggested_start_time=item.get("suggested_start_time"),
             suggested_end_time=item.get("suggested_end_time"),
-            location=item.get("location"),
-            status="pending"
+            location=item.get("location")
         )
         db.add(suggestion)
         saved_suggestions.append(suggestion)
@@ -37,3 +36,35 @@ def suggest_events(note_id: int, db: Session = Depends(get_db)):
         db.refresh(s)
     
     return saved_suggestions
+
+# get all suggestions
+@router.get("/suggestions", response_model=List[schemas.SuggestionResponse])
+def get_pending_suggestions(db: Session = Depends(get_db)):
+    return db.query(models.Suggestion).all()
+
+@router.post("/suggestions/{suggestion_id}/accept", response_model=schemas.EventResponse)
+def accept_suggestion(suggestion_id: int, db: Session = Depends(get_db)):
+    suggestion = db.query(models.Suggestion).filter(models.Suggestion.id == suggestion_id).first()
+    if not suggestion:
+        raise HTTPException(status_code=404, detail="Suggestion not found")
+    new_event = models.Event(
+        title=suggestion.title,
+        description=suggestion.description,
+        start_time=suggestion.suggested_start_time,
+        end_time=suggestion.suggested_end_time,
+        location=suggestion.location
+    )
+    db.add(new_event)
+    db.delete(suggestion)
+    db.commit()
+    db.refresh(new_event)
+    return new_event
+
+@router.delete("/suggestions/{suggestion_id}")
+def dismiss_suggestion(suggestion_id: int, db: Session = Depends(get_db)):
+    suggestion = db.query(models.Suggestion).filter(models.Suggestion.id == suggestion_id).first()
+    if not suggestion:
+        raise HTTPException(status_code=404, detail="Suggestion not found")
+    db.delete(suggestion)
+    db.commit()
+    return {"message": "Suggestion dismissed"}
