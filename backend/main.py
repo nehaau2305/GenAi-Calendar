@@ -6,6 +6,8 @@ from events import router as events_router
 from ai import router as ai_router
 from notes import router as notes_router
 
+# app entry point
+
 # Create all tables defined by models.py that inherit from Base
 Base.metadata.create_all(bind=engine)
 

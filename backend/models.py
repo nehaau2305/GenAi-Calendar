@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 from database import Base
 
+# calendar event
 class Event(Base):
     __tablename__ = "events"
 
@@ -15,6 +16,7 @@ class Event(Base):
     # will add smart reminders
     smart_reminders = relationship("SmartReminder", back_populates="event")
 
+# user's note (like journal entry)
 class DailyNote(Base):
     __tablename__ = "daily_notes"
 
@@ -22,7 +24,7 @@ class DailyNote(Base):
     content = Column(String, nullable=False)
     created_at = Column(DateTime, nullable=False)
 
-
+# AI generated event idea based on note
 class Suggestion(Base):
     __tablename__ = "suggestions"
 
@@ -35,6 +37,7 @@ class Suggestion(Base):
     location = Column(String, nullable=True)
     status = Column(String, nullable=False, default="pending")
 
+#AI generated reminder
 class SmartReminder(Base):
     __tablename__ = "smart_reminders"
 

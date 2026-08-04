@@ -2,6 +2,9 @@ from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
 
+# schema defines the data types of the info passed to the API
+# and passed back
+
 # frontend sends this when creating an event
 class EventCreate(BaseModel):
     title: str
@@ -31,4 +34,17 @@ class NoteResponse(BaseModel):
     created_at: datetime
 
     class Config:
+        from_attributes = True
+
+class SuggestionResponse(BaseModel):
+    id: int
+    note_id: int
+    title: str
+    description: Optional[str] = None
+    suggested_start_time: Optional[datetime] = None
+    suggested_end_time: Optional[datetime] = None
+    location: Optional[str] = None
+    status: str
+
+    class Config: 
         from_attributes = True

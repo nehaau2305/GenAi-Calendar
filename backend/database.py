@@ -15,7 +15,8 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 class Base(DeclarativeBase):
     pass
 
-# database session
+# database session to connect to PostgreSQL using connection String
+# from .env
 def get_db():
     db = SessionLocal()
     try:
