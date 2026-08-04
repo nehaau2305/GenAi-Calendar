@@ -1,6 +1,6 @@
 import requests
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
 MODEL_NAME = "llama3.2"
@@ -25,6 +25,11 @@ def parse_event_text(user_text: str) -> dict:
     prompt = f"""Today's date is {today}.
     Extract calendar event details from this text and return ONLY valid JSON, no other text, no explanation.
 
+    Example:
+    Text: "Emma’s birthday party will be next Tuesday from 4pm to 9pm at her house."
+    Output: {{"title": "Emma's birthday party", "description": null, "start_time": "2026-08-11T16:00:00", "end_time": "2026-08-11T21:00:00", "location": "Emma's house"}}
+
+
     Text: "{user_text}"
     Return JSON in exactly this format:
     {{
@@ -39,6 +44,7 @@ def parse_event_text(user_text: str) -> dict:
     - If no start time is mentioned, assume 9:00 AM. 
     - If no date is mentioned at all, assume today's date.
     - If no date and start time are mentioned, assume today's date and an hour from the current time. 
+    - Carefully extract the accurate time, location, & description mentioned in the user's text.
     - If no description is mentioned, use the JSON value null (not a String).
     - If no location is mentioned, use the JSON value null (not a String).
     - Respond with ONLY the JSON object. No explanation nor extra text."""

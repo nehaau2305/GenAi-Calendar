@@ -21,3 +21,14 @@ class EventResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class NoteCreate(BaseModel):
+    content: str
+
+class NoteResponse(BaseModel):
+    id: int
+    content: str
+    created_at: datetime
+
+    class Config:
+        from_attributes = True

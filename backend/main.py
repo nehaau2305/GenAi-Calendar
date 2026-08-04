@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from database import Base, engine
 import models
 from events import router as events_router
+from ai import router as ai_router
+from notes import router as notes_router
 
 # Create all tables defined by models.py that inherit from Base
 Base.metadata.create_all(bind=engine)
@@ -18,6 +20,8 @@ app.add_middleware(
 )
 
 app.include_router(events_router)
+app.include_router(ai_router)
+app.include_router(notes_router)
 
 @app.get("/")
 def read_root():
