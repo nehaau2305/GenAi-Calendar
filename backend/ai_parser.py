@@ -7,6 +7,25 @@ MODEL_NAME = "llama3.2"
 
 # AI parses user's note & generates proposed events
 
+# ai was giving start times in the past
+def fix_past_dates(suggestions: list[dict]) -> list[dict]:
+    now = datetime.now()
+    for item in suggestions:
+        try:
+            start = datetime.fromisoformat(item["suggested_start_time"])
+            end = datetime.fromisoformat(item["suggested_end_time"])
+            duration = end - start
+            if start < now:
+                days_behind = (now - start).days
+                weeks_add = (days_behind // 7) + 1
+                start = start + timedelta(weeks=weeks_add)
+                end = start + duration
+            item["suggested_start_time"] = start.isoformat()
+            item["suggested_end_time"] = end.isoformat()
+        except (ValueError, KeyError, TypeError):
+            pass
+    return suggestions
+
 def suggest_events_from_note(note_text: str) -> list[dict]:
     today = datetime.now().strftime("%Y-%m-%d (%A)")
     prompt = f"""Today's date is {today}.
@@ -36,6 +55,7 @@ def suggest_events_from_note(note_text: str) -> list[dict]:
     - Always provide a specific description citing the user's note to explain the suggestion's context.
     - Always provide a best-guess suggested_start_time and suggested_end_time depending on the type of event if the note does not provide a clear start and end time.Use reasonable default times: errands/tasks start at 9:00 AM the same or next day and end an hour later; if a specific future day is mentioned, use that date at a reasonable default time and duration.
     - location should be null only if no location is mentioned or implied.
+    - IMPORTANT: If the user implies a future event, the suggested_start_time and suggested_end_time must always be either the current date or a future date and time. 
     - Respond with ONLY the JSON array, No explanation, no extra text."""
 
     response = requests.post(
@@ -51,4 +71,5 @@ def suggest_events_from_note(note_text: str) -> list[dict]:
     raw_text = result["response"]
 
     suggestions = json.loads(raw_text)
+    suggestions = fix_past_dates(suggestions)
     return suggestions
