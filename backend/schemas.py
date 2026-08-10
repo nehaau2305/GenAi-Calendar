@@ -47,3 +47,12 @@ class SuggestionResponse(BaseModel):
 
     class Config: 
         from_attributes = True
+
+class SmartReminderResponse(BaseModel):
+    id: int
+    event_id: int
+    message: str
+    trigger_time: datetime
+    is_dismissed: bool
+    class Config:
+        from_attributes = True

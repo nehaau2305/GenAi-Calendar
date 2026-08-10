@@ -5,6 +5,7 @@ import models
 from events import router as events_router
 from ai import router as ai_router
 from notes import router as notes_router
+from reminders import router as reminders_router
 
 # app entry point
 
@@ -24,6 +25,7 @@ app.add_middleware(
 app.include_router(events_router)
 app.include_router(ai_router)
 app.include_router(notes_router)
+app.include_router(reminders_router)
 
 @app.get("/")
 def read_root():

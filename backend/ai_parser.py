@@ -56,6 +56,7 @@ def suggest_events_from_note(note_text: str) -> list[dict]:
     - Always provide a best-guess suggested_start_time and suggested_end_time depending on the type of event if the note does not provide a clear start and end time.Use reasonable default times: errands/tasks start at 9:00 AM the same or next day and end an hour later; if a specific future day is mentioned, use that date at a reasonable default time and duration.
     - location should be null only if no location is mentioned or implied.
     - IMPORTANT: If the user implies a future event, the suggested_start_time and suggested_end_time must always be either the current date or a future date and time. 
+    - IMPORTANT: Do not suggest preparation tasks that only exist to prepare for another event mentioned in the same note (ex. buying a gift for a party, packing for a trip, printing documents for a meeting). Only suggest the main event itself (ex. Birthday party, meeting), not its prep tasks - those will be handled by the reminders functionality.
     - Respond with ONLY the JSON array, No explanation, no extra text."""
 
     response = requests.post(
@@ -73,3 +74,47 @@ def suggest_events_from_note(note_text: str) -> list[dict]:
     suggestions = json.loads(raw_text)
     suggestions = fix_past_dates(suggestions)
     return suggestions
+
+# smart reminders
+def generate_smart_reminders(event_title: str, event_description: str, event_start_time: str) -> list[dict]:
+    prompt = f"""You are helping the user prepare for an upcoming event on their calendar.
+    Event title: "{event_title}"
+    Event description: "{event_description}"
+    Event start time: {event_start_time}
+    Determine if this event requires advance preparation. Examples: A birthday party event may require the user to purchase a gift a few days before the event; An early morning event may warrant a reminder to sleep early the night before about an hour before its recommended they sleep by; a trip plan may need packing reminders; a doctor's appointment may require a reminder to prepare insurance ifnormation.
+
+    Return ONLY a valid JSON array of reminders, no other text. Each reminder should have this format: 
+    {{
+        "message": "short, actionable reminder message",
+        "trigger_time": "YYY-MM-DDTHH:MM:SS"
+    }}
+    trigger_time must always be at least 30 minutes BEFORE the event's start time ({event_start_time}), never at the same time or after.
+
+    Example:
+    Event title: "Emma's Birthday Party"
+    Event start time: "2026-08-15T16:00:00"
+    Output: [
+        {{"message": "Buy a gift for Emma's birthday party", "trigger_time": "2026-08-13T10:00:00"}}
+    ]
+
+    Rules:
+    - If the event doesn't need any preparation (ex. a routine meeting), return an empty arrya: []
+    - Only suggest genuinely useful, specific reminders.
+    - Do NOT assume the user is hosting or organizing the event unless clearly stated in event title or description.
+    - When unsure if the user is hosting or attending an event, default to the user being an attendee.
+    - Choose trigger_time based on how much lead time the task realistically needs: planning or bigger preparation tasks may need several days of notice, do not schedule a reminder for the same day as the event unless it is simple prep that can be done within an hour.
+    - Generate at most 2 reminders per event.
+    - Respond with ONLY the JSON array. No explanation, no extra text."""
+
+    response = requests.post(
+        OLLAMA_URL,
+        json={
+            "model": MODEL_NAME,
+            "prompt": prompt,
+            "stream": False,
+        },
+    )
+    result = response.json()
+    raw_text = result["response"]
+    reminders = json.loads(raw_text)
+    return reminders
