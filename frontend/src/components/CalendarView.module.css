@@ -1,0 +1,53 @@
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.monthLabel {
+    font-weight: bold;
+}
+
+.navButton {
+    cursor: pointer;
+}
+
+.weekdayRow {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-weight: bold;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-auto-rows: 100px;
+}
+
+.dayCell {
+    overflow: hidden;
+}
+
+.emptyCell {
+
+}
+
+.todayCell {
+
+}
+
+.dayNumber {
+    font-weight: bold;
+}
+
+.eventBox {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

@@ -1,0 +1,21 @@
+.form {
+    display: flex;
+    flex-direction: column;
+}
+
+.heading {
+    font-weight: bold;
+}
+
+.textArea {
+
+}
+
+.button {
+    cursor: pointer;
+}
+
+.button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

@@ -1,0 +1,18 @@
+.main {
+    display: flex;
+    flex-direction: column;
+}
+
+.heading {
+    font-weight: bold;
+}
+
+.formsRow {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.formColumn {
+    flex: 1;
+    min-width: 300px;
+}

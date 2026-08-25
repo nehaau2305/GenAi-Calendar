@@ -1,0 +1,29 @@
+.form {
+    display: flex;
+    flex-direction: column;
+}
+
+.heading {
+
+}
+
+.input {
+
+}
+
+.timeRow {
+    display: flex;
+}
+
+.timeInput {
+    flex: 1;
+}
+
+.button {
+    cursor: pointer;
+}
+
+.button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
