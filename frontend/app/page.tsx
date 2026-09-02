@@ -36,9 +36,11 @@ export default function Home() {
       <CalendarView events={events} />
 
       <div className={styles.formsRow}>
+        {/** 
         <div className={styles.formColumn}>
           <EventForm onEventCreated={refreshData} />
         </div>
+        */}
         <div className={styles.formColumn}>
           <NoteForm onNoteCreated={handleNoteCreated} />
         </div>

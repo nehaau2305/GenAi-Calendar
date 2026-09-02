@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { Event } from "../lib/api";
-import styles from "./CalendarView.module.css"
+import styles from "./CalendarView.module.css";
+import EventModal from "./EventModal";
 
 interface CalendarViewProps {
     events: Event[];
@@ -15,6 +16,7 @@ const MONTH_LABELS = ["January", "February", "March", "April", "May", "June",
 
 export default function CalendarView({events}: CalendarViewProps) {
     const [currentDate, setCurrentDate] = useState(new Date());
+    const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
 
@@ -51,7 +53,13 @@ export default function CalendarView({events}: CalendarViewProps) {
     };
     const goToNextMonth = () => {
         setCurrentDate(new Date(year, month + 1, 1));
-    }
+    };
+    const openEventModal = (dateKey: string) => {
+        setSelectedDate(dateKey);
+    };
+    const closeEventModal = () => {
+        setSelectedDate(null);
+    };
 
     return (
         <div className={styles.container}>
@@ -82,6 +90,12 @@ export default function CalendarView({events}: CalendarViewProps) {
                             className={`${styles.dayCell} ${isToday(day) ? styles.todayCell : ""}`}
                         >
                             <div className={styles.dayNumber}>{day}</div>
+                            <button
+                                type="button"
+                                className={styles.addEventButton}
+                                onClick={() => openEventModal(dateKey)}
+                                aria-label={`Add Event`}
+                            >+</button>
                             {dayEvents.map((event) => (
                                 <div key={event.id} className={styles.eventBox} title={event.title}>
                                     {event.title}
@@ -91,6 +105,13 @@ export default function CalendarView({events}: CalendarViewProps) {
                     );
                 })}
             </div>
+            {selectedDate && (
+                <EventModal
+                    date={selectedDate}
+                    onClose={closeEventModal}
+                    onEventCreated={() => {}}
+                />
+            )}
         </div>
     );
 }
