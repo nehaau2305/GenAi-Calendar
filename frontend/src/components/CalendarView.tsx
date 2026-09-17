@@ -9,6 +9,7 @@ import NotesModal from "./NotesModal";
 interface CalendarViewProps {
     events: Event[];
     notes: Note[];
+    onNoteCreated: (noteId: number) => void;
 }
 
 const WEEKDAY_LABELS = ["Sun", "Mon", "Tues", "Wed", "Thu", "Fri", "Sat"];
@@ -16,13 +17,13 @@ const MONTH_LABELS = ["January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
 ];
 
-export default function CalendarView({events, notes}: CalendarViewProps) {
+export default function CalendarView({events, notes, onNoteCreated}: CalendarViewProps) {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [notesModalDate, setNotesModalDate] = useState<string | null>(null);
+
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
-
     const firstDayOfMonth = new Date(year, month, 1);
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const startingWeekday = firstDayOfMonth.getDay();
@@ -57,8 +58,8 @@ export default function CalendarView({events, notes}: CalendarViewProps) {
     }
 
     const today = new Date();
-    const isToday = (day: number) =>
-        day === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+    const todayDateKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+    const isToday = (dateKey: string) => dateKey === todayDateKey;
 
     const goToPreviousMonth = () => {
         setCurrentDate(new Date(year, month - 1, 1));
@@ -105,7 +106,7 @@ export default function CalendarView({events, notes}: CalendarViewProps) {
                     return (
                         <div
                             key={dateKey}
-                            className={`${styles.dayCell} ${isToday(day) ? styles.todayCell : ""}`}
+                            className={`${styles.dayCell} ${isToday(dateKey) ? styles.todayCell : ""}`}
                         >
                             <div className={styles.dayCellHeader}>
                                 <div className={styles.dayNumber}>{day}</div>
@@ -149,6 +150,8 @@ export default function CalendarView({events, notes}: CalendarViewProps) {
                 <NotesModal
                     date={notesModalDate}
                     notes={notesByDate[notesModalDate] || []}
+                    isToday={notesModalDate ? isToday(notesModalDate) : false}
+                    onNoteCreated={onNoteCreated}
                     onClose={closeNotesModal}
                 />
             )}

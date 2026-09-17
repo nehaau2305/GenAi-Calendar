@@ -40,7 +40,8 @@
 }
 
 .todayCell {
-    border: 3px solid rgb(71, 255, 240);
+    border: 3px solid rgb(193, 221, 202);
+    background-color: rgb(240, 244, 229);
 }
 
 .dayNumber {
