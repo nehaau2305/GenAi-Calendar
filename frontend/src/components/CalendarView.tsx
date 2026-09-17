@@ -1,12 +1,14 @@
 "use client"
 
 import { useState } from "react";
-import { Event } from "../lib/api";
+import { Event, Note } from "../lib/api";
 import styles from "./CalendarView.module.css";
 import EventModal from "./EventModal";
+import NotesModal from "./NotesModal";
 
 interface CalendarViewProps {
     events: Event[];
+    notes: Note[];
 }
 
 const WEEKDAY_LABELS = ["Sun", "Mon", "Tues", "Wed", "Thu", "Fri", "Sat"];
@@ -14,9 +16,10 @@ const MONTH_LABELS = ["January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
 ];
 
-export default function CalendarView({events}: CalendarViewProps) {
+export default function CalendarView({events, notes}: CalendarViewProps) {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
+    const [notesModalDate, setNotesModalDate] = useState<string | null>(null);
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
 
@@ -44,6 +47,15 @@ export default function CalendarView({events}: CalendarViewProps) {
         eventsByDate[dateKey].push(event);
     }
 
+    const notesByDate: Record<string, Note[]> = {};
+    for (const note of notes) {
+        const dateKey = note.created_at.split("T")[0];
+        if (!notesByDate[dateKey]) {
+            notesByDate[dateKey] = [];
+        }
+        notesByDate[dateKey].push(note);
+    }
+
     const today = new Date();
     const isToday = (day: number) =>
         day === today.getDate() && month === today.getMonth() && year === today.getFullYear();
@@ -59,6 +71,12 @@ export default function CalendarView({events}: CalendarViewProps) {
     };
     const closeEventModal = () => {
         setSelectedDate(null);
+    };
+    const openNotesModal = (dateKey: string) => {
+        setNotesModalDate(dateKey);
+    };
+    const closeNotesModal = () => {
+        setNotesModalDate(null);
     };
 
     return (
@@ -89,13 +107,28 @@ export default function CalendarView({events}: CalendarViewProps) {
                             key={dateKey}
                             className={`${styles.dayCell} ${isToday(day) ? styles.todayCell : ""}`}
                         >
-                            <div className={styles.dayNumber}>{day}</div>
-                            <button
-                                type="button"
-                                className={styles.addEventButton}
-                                onClick={() => openEventModal(dateKey)}
-                                aria-label={`Add Event`}
-                            >+</button>
+                            <div className={styles.dayCellHeader}>
+                                <div className={styles.dayNumber}>{day}</div>
+                                <div className={styles.dayActions}>
+                                    <button
+                                        type="button"
+                                        className={styles.openNotesButton}
+                                        onClick={() => openNotesModal(dateKey)}
+                                        aria-label="View Notes"
+                                    >
+                                        <img
+                                            src="/images/note-icon.png"
+                                            alt=""
+                                        />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className={styles.addEventButton}
+                                        onClick={() => openEventModal(dateKey)}
+                                        aria-label={`Add Event`}
+                                    >+</button>
+                                </div>
+                            </div>
                             {dayEvents.map((event) => (
                                 <div key={event.id} className={styles.eventBox} title={event.title}>
                                     {event.title}
@@ -110,6 +143,13 @@ export default function CalendarView({events}: CalendarViewProps) {
                     date={selectedDate}
                     onClose={closeEventModal}
                     onEventCreated={() => {}}
+                />
+            )}
+            {notesModalDate && (
+                <NotesModal
+                    date={notesModalDate}
+                    notes={notesByDate[notesModalDate] || []}
+                    onClose={closeNotesModal}
                 />
             )}
         </div>

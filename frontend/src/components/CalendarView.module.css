@@ -32,6 +32,7 @@
 
 .dayCell {
     overflow: hidden;
+    padding: 8px;
 }
 
 .emptyCell {
@@ -39,7 +40,7 @@
 }
 
 .todayCell {
-
+    border: 3px solid rgb(71, 255, 240);
 }
 
 .dayNumber {
@@ -52,13 +53,44 @@
     white-space: nowrap;
 }
 
+.dayCellHeader {
+    display: flex;
+    justify-content: space-between;
+}
+
+.dayActions {
+    display: flex;
+    align-items: center;
+}
+
+.openNotesButton {
+    cursor: pointer;
+    background: transparent;
+    height: 20px;
+    width: 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.openNotesButton img {
+    width: 14px;
+    height: 14px;
+}
+
 .addEventButton {
+    cursor: pointer;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.15s ease, transform 0.15s ease;
 }
 
 .dayCell:hover .addEventButton {
+    opacity: 1;
+    visibility: visible;
+}
+
+.dayCell:hover .openNotesButton {
     opacity: 1;
     visibility: visible;
 }

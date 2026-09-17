@@ -16,3 +16,35 @@
     flex: 1;
     min-width: 300px;
 }
+
+.layoutRow {
+    display: flex;
+    align-items: stretch;
+}
+
+.calendarColumn {
+    width: 100%;
+    transition: width 0.2s ease;
+}
+
+.calendarColumnShrunk {
+    width: 80%;
+}
+
+.sidebarColumn {
+    width: 20%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(255, 253, 208);
+}
+
+.toggleButton {
+    z-index: 10;
+    cursor: pointer;
+}
+
+.theHeader{
+    display: flex;
+    justify-content: space-between;
+}

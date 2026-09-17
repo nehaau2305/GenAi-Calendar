@@ -29,7 +29,14 @@ export default function SuggestionsList({suggestions, onSuggestionHandled}: Sugg
     };
 
     if (suggestions.length === 0) {
-        return null;
+        return (
+            <div className={styles.container}>
+                <h2>AI Suggestions</h2>
+                <p className={styles.emptyMessage}>
+                    No suggestions right now. Suggestions will appear following an event creation or submission of a note.
+                </p>
+            </div>
+        );
     }
 
     return (
