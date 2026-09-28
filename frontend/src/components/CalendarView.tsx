@@ -10,6 +10,7 @@ interface CalendarViewProps {
     events: Event[];
     notes: Note[];
     onNoteCreated: (noteId: number) => void;
+    onEventCreated: () => void;
 }
 
 const WEEKDAY_LABELS = ["Sun", "Mon", "Tues", "Wed", "Thu", "Fri", "Sat"];
@@ -17,7 +18,7 @@ const MONTH_LABELS = ["January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
 ];
 
-export default function CalendarView({events, notes, onNoteCreated}: CalendarViewProps) {
+export default function CalendarView({events, notes, onNoteCreated, onEventCreated}: CalendarViewProps) {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [notesModalDate, setNotesModalDate] = useState<string | null>(null);
@@ -143,7 +144,7 @@ export default function CalendarView({events, notes, onNoteCreated}: CalendarVie
                 <EventModal
                     date={selectedDate}
                     onClose={closeEventModal}
-                    onEventCreated={() => {}}
+                    onEventCreated= {onEventCreated}
                 />
             )}
             {notesModalDate && (

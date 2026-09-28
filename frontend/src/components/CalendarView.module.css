@@ -1,6 +1,7 @@
 .container {
     display: flex;
     flex-direction: column;
+    flex: 1;
 }
 
 .header {
@@ -27,7 +28,8 @@
 .grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    grid-auto-rows: 100px;
+    grid-auto-rows: minmax(6rem, 1fr);
+    flex: 1;
 }
 
 .dayCell {

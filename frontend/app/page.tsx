@@ -39,7 +39,7 @@ export default function Home() {
   return (
     <main className={styles.main}>
       <h1 className={styles.heading}>GenAi Calendar</h1>
-      <CalendarView events={events} notes={notes} onNoteCreated={handleNoteCreated} />
+      <CalendarView events={events} notes={notes} onNoteCreated={handleNoteCreated} onEventCreated={refreshData}/>
       {suggestionsModalOpen && (
         <SuggestionsModal
           suggestions={suggestions}
